@@ -3,18 +3,8 @@ import fs from 'fs';
 import { promises as fsPromises } from 'fs';
 import path from 'path';
 import { Router, Request, Response } from 'express';
-
-type Field = 'contractType' | 'location' | 'department';
-type Operator = 'equals';
-type Condition = { field: Field; operator: Operator; value: string };
-type Rule = {
-  id: string;
-  name: string;
-  enabled: boolean;
-  priority: number;
-  conditions: Condition[];
-  assigneeEmail: string;
-};
+import type { Condition, Field, Rule } from '../domain/rules';
+export type { Condition, Field, Rule } from '../domain/rules';
 
 const router = Router();
 
@@ -48,6 +38,8 @@ const persistRules = async (): Promise<void> => {
   await fsPromises.mkdir(path.dirname(dataFilePath), { recursive: true });
   await fsPromises.writeFile(dataFilePath, JSON.stringify(rules, null, 2), 'utf-8');
 };
+
+export const getRules = (): Rule[] => rules;
 
 const validateConditions = (input: unknown): { ok: true; value: Condition[] } | { ok: false; message: string } => {
   if (!Array.isArray(input) || input.length === 0) {
