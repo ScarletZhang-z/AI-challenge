@@ -9,7 +9,7 @@
   --accent: #8f66ff;
   --accent-2: #5c5fff;
   --input-bg: #ece6f0;
-  --input-placeholder: #49454f;
+  --input-placeholder: #ccc;
   --bubble-user: #544fff;
 }
 
@@ -18,7 +18,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 1.5rem 1rem 2.5rem;
 }
 
 .mobile-chat-frame {
@@ -41,13 +40,20 @@
   background: var(--bg);
 }
 
+.mobile-chat-controls {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
 .icon-button {
   width: 38px;
   height: 38px;
   border-radius: 12px;
   border: none;
   background: transparent;
-  color: var(--text-strong);
+  color: var(--text-primary);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -61,8 +67,8 @@
 }
 
 .floating-agent {
-  position: absolute;
-  bottom: 46px;
+  position: relative;
+  bottom: -26px;
   left: 10px;
   width: 11rem;
   height: 15rem;

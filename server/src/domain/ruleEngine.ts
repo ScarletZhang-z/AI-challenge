@@ -5,21 +5,6 @@ export type RuleEvaluationResult =
   | { status: 'missing_fields'; missingFields: Field[] }
   | { status: 'no_match' };
 
-const collectRequiredFields = (rules: Rule[]): Field[] => {
-  const required = new Set<Field>();
-
-  for (const rule of rules) {
-    for (const condition of rule.conditions) {
-      required.add(condition.field);
-    }
-  }
-
-  return Array.from(required);
-};
-
-const findMatchingRule = (rules: Rule[], sessionState: RuleEvaluationSession): Rule | undefined =>
-  rules.find((rule) => rule.conditions.every((condition) => sessionState[condition.field] === condition.value));
-
 export const evaluateRules = ({
   rules,
   sessionState,
@@ -31,16 +16,39 @@ export const evaluateRules = ({
     .filter((rule) => rule.enabled)
     .sort((a, b) => b.priority - a.priority);
 
-  const matchedRule = findMatchingRule(activeRules, sessionState);
-  if (matchedRule) {
-    return { status: 'matched', rule: matchedRule };
+  const knownFieldCount = Object.values(sessionState).filter((value) => value != null).length;
+  const missingAcrossCandidates = new Set<Field>();
+
+  for (const rule of activeRules) {
+    const conditions = rule.conditions;
+
+    const missingFieldsForRule = Array.from(new Set(rule.conditions.map((condition) => condition.field))).filter(
+      (field) => sessionState[field] == null,
+    );
+
+    const hasMismatch = conditions.some(
+      (condition) => sessionState[condition.field] != null && sessionState[condition.field] !== condition.value,
+    );
+    if (hasMismatch) {
+      continue;
+    }
+
+    const matches = conditions.every((condition) => sessionState[condition.field] === condition.value);
+    if (matches) {
+      return { status: 'matched', rule };
+    }
+
+    const matchedKnownCount = conditions.filter(
+      (condition) => sessionState[condition.field] != null && sessionState[condition.field] === condition.value,
+    ).length;
+
+    if (missingFieldsForRule.length > 0 && (matchedKnownCount > 0 || knownFieldCount === 0)) {
+      missingFieldsForRule.forEach((field) => missingAcrossCandidates.add(field));
+    }
   }
 
-  const requiredFields = collectRequiredFields(activeRules);
-  const missingFields = requiredFields.filter((field) => sessionState[field] === null);
-
-  if (missingFields.length > 0) {
-    return { status: 'missing_fields', missingFields };
+  if (missingAcrossCandidates.size > 0) {
+    return { status: 'missing_fields', missingFields: Array.from(missingAcrossCandidates) };
   }
 
   return { status: 'no_match' };

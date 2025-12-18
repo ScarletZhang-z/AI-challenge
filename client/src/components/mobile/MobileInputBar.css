@@ -4,7 +4,6 @@
   background: var(--panel-soft);
   border-top: 1px solid rgba(255, 255, 255, 0.07);
   min-height: 75px;
-  position: absolute;
   bottom: 0;
   width: 100%;
 }
@@ -12,12 +11,44 @@
 .mobile-input-border {
   display: flex;
   border-radius: 1.75rem;
-  border: 1px solid rgba(255, 255, 255, 0.28);
+  border: 2px solid rgba(255, 255, 255, 0.28);
   background:
     linear-gradient(#0b0d1c, #0b0d1c) padding-box,
     linear-gradient(90deg, #6a5cff, #4da3ff, #3cf2e6) border-box;
   overflow: hidden;
 }
+
+.mobile-input-border {
+  display: flex;
+  border-radius: 1.75rem;
+  border: 2px solid transparent;
+
+  background:
+    linear-gradient(#0b0d1c, #0b0d1c) padding-box,
+    linear-gradient(
+      90deg,
+      #6a5cff,
+      #4da3ff,
+      #3cf2e6,
+      #6a5cff
+    ) border-box;
+
+  background-size:
+    100% 100%,
+    300% 100%;
+
+  animation: borderFlow 4s linear infinite;
+}
+
+@keyframes borderFlow {
+  0% {
+    background-position: 0% 0%, 0% 0%;
+  }
+  100% {
+    background-position: 0% 0%, 300% 0%;
+  }
+}
+
 
 .mobile-input-shell {
   flex: 1;
@@ -25,7 +56,17 @@
   padding: 0 0.2rem 0 0.5rem;
   box-shadow: 0 12px 26px rgba(0, 0, 0, 0.16);
   gap: 0.35rem;
-  background: var(--input-bg);
+  background: radial-gradient(
+      120% 100% at 50% 100%,
+      rgba(120, 130, 255, 0.25) 0%,
+      rgba(60, 70, 160, 0.18) 35%,
+      rgba(15, 18, 45, 0.95) 70%
+    ),
+    linear-gradient(
+      180deg,
+      #0b0f2a 0%,
+      #0a0d24 100%
+    );
   align-items: center;
 }
 
@@ -33,7 +74,7 @@
   width: 100%;
   border: none;
   background: transparent;
-  color: var(--text-dark);
+  color: var(--text-primary);
   font-size: 1rem;
   font-weight: 500;
   letter-spacing: 0.01em;
@@ -56,7 +97,7 @@
 
 .mobile-input-shell .icon-button {
   background: transparent;
-  color: #3d3f56;
+  color: var(--text-primary);
   width: 32px;
   height: 32px;
   box-shadow: none;
@@ -85,10 +126,37 @@
 .voice-input-shell {
   flex: 1;
   background: linear-gradient(120deg, #7055ff, #46e3ff);
-  padding: 1px;
+  padding: 2px;
   border-radius: 999px;
   box-shadow: 0 14px 32px rgba(0, 0, 0, 0.32);
 }
+
+.voice-input-shell {
+  flex: 1;
+  padding: 2px;
+  border-radius: 999px;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.32);
+
+  background: linear-gradient(
+    120deg,
+    #7055ff,
+    #46e3ff,
+    #7055ff
+  );
+
+  background-size: 300% 300%;
+  animation: voiceFlow 4s linear infinite;
+}
+
+@keyframes voiceFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 300% 50%;
+  }
+}
+
 
 .voice-input-inner {
   background: var(--panel);
@@ -153,7 +221,7 @@
 
 .keyboard-button {
   background: transparent;
-  color: #f4f5ff;
+  color: var(--text-primary);
   border: none;
   box-shadow: none;
   width: 32px;

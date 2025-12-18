@@ -1,32 +1,24 @@
 import { NavLink, Navigate, Route, Routes } from "react-router-dom";
 import ChatPage from "./pages/ChatPage";
 import ConfigurePage from "./pages/ConfigurePage";
-import MobileChatPage from "./pages/MobileChatPage";
-import "./App.css";
+import "./styles/layout.css";
 
 export default function App() {
   return (
     <div className="app-shell">
       <nav className="app-nav">
-        <h2>Legal frontdoor</h2>
         <div className="nav-links">
           <NavLink
             to="/chat"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
-            Chat
+            Mobile Chat
           </NavLink>
           <NavLink
             to="/configure"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
             Configure
-          </NavLink>
-          <NavLink
-            to="/mobile-chat"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
-            Mobile Chat
           </NavLink>
         </div>
       </nav>
@@ -35,7 +27,6 @@ export default function App() {
         <Routes>
           <Route path="/chat" element={<ChatPage />} />
           <Route path="/configure" element={<ConfigurePage />} />
-          <Route path="/mobile-chat" element={<MobileChatPage />} />
           <Route path="*" element={<Navigate to="/chat" replace />} />
         </Routes>
       </main>

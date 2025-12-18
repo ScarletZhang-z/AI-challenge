@@ -19,6 +19,21 @@ export const createLLMFieldExtractor = (openai: OpenAI): FieldExtractor => {
       'Fill only fields you are confident about based on the conversation. Prefer country for location; prefer contract type/category for contractType; keep department short (e.g. Engineering, Marketing).',
   });
 
+  const RESPONSE_SCHEMA = {
+    name: 'TriageFields',
+    strict: true,
+    schema: {
+      type: 'object',
+      properties: {
+        contractType: { type: ['string', 'null'] },
+        location: { type: ['string', 'null'] },
+        department: { type: ['string', 'null'] },
+      },
+      required: ['contractType', 'location', 'department'],
+      additionalProperties: false,
+    },
+  } as const;
+
   return {
     async extractWithLLM(
       userMessage: string,
@@ -34,7 +49,7 @@ export const createLLMFieldExtractor = (openai: OpenAI): FieldExtractor => {
       try {
         const completion = await openai.chat.completions.create({
           model,
-          response_format: { type: 'json_object' },
+          response_format: { type: 'json_schema', json_schema: RESPONSE_SCHEMA },
           messages: [
             {
               role: 'system',
@@ -46,11 +61,13 @@ export const createLLMFieldExtractor = (openai: OpenAI): FieldExtractor => {
         });
 
         const raw = completion.choices[0]?.message?.content ?? '';
+        
         if (!raw) {
           return {};
         }
 
         const parsed = JSON.parse(raw) as Partial<SessionState>;
+        
         const result: Partial<SessionState> = {};
 
         const contractType = normalizeContractType(parsed.contractType);
